@@ -10,9 +10,159 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+let employees = [];
+let testEmployee = [];
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
+let manager = () => {
+  inquirer
+  .prompt([
+    {
+      type: "input",
+      message: "Welcome to the Employee Template Engine. \nManager, please enter your Name.",
+      name: "manager"
+    },
+    {
+      type: "input",
+      message: "What is your ID Number?",
+      name:"managerId"
+    },
+    {
+      type: "input",
+      message: "Please enter your office number",
+      name:"managerOffice#"
+    },
+    {
+      type: "input",
+      message: "What is your Email Address?",
+      name:"managerEmail"
+    },
+    {
+      type: "confirm",
+      message: "Do you want an Engineer?",
+      name: "confirm"
+    }
+  ])
+  .then(function(respMan){
+    const manager = new Manager (respMan.manager, respMan.managerId, respMan.managerEmail, respMan.managerOffice);
+    employees.push(manager);
+    if(respMan.confirm){
+      return engineer();
+    }else{
+      return askIntern();
+    }
+  })
+}
+
+
+let engineer = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        message: "What is the name of the Engineer?",
+        name: "engineer"
+      },
+      {
+        type: "input",
+        message: "What is the Engineer's ID Number?",
+        name: "engineerId"
+      },
+      {
+        type: "input",
+        message: "What is the Engineer's Email Address?",
+        name: "engineerEmail"
+      },
+      {
+        type: "input",
+        message: "What is the Engineer's GitHub User Name?",
+        name: "engineerGithub"
+      },
+      {
+        type: "confirm",
+        message: "Do you wish to add another Engineer?",
+        name: "engineerConfirm"
+      }
+    ])
+    .then(function(respEng){
+      const engineerObj = new Engineer(respEng.engineer, respEng.engineerId, respEng.engineerEmail, respEng.engineerGithub)
+
+      employees.push(engineerObj)
+      if(respEng.engConfirm){
+        return engineer()
+      }else{
+        return askIntern()
+      }
+    })
+
+};
+let intern = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        message: "What is the Name of the Intern?",
+        name: "intern"
+      },
+      {
+        type: "input",
+        message: "What is the Intern's ID Number?",
+        name: "internId"
+      },
+      {
+        type: "input",
+        message: "What is the Intern's Email Address?",
+        name: "internEmail"
+      },
+      {
+        type: "input",
+        message: "What is the Intern's School?",
+        name: "internSchool"
+      },
+      {
+        type: "confirm",
+        message: "Do you want to add another Intern?",
+        name: "internConfirm"
+      }
+    ])
+    .then(function(respInt){
+      const internObj = new Intern (respInt.intern, respInt.internId, respInt.internEmail, respInt.internSchool)
+
+      employees.push(internObj)
+      if(respInt.intConfirm){
+        return intern()
+      }
+      toWriteHtml();
+    })
+
+};
+let askIntern = () => {
+  inquirer
+  .prompt([
+    {
+      type: "confirm",
+      message: "Would you like to add an Intern?",
+      name: "confirm"
+    }
+  ])
+  .then(function(respIntConfirm){
+    if(respIntConfirm.confirm){
+      return intern()
+    }else{
+      return toWriteHtml()
+    }
+  })
+}
+
+let toWriteHtml = () => {
+  if(!fs.existsSync(OUTPUT_DIR)) {
+    fs.mkdirSync(OUTPUT_DIR)
+  }
+  fs.writeFileSync(outputPath, render(employees), "utf-8");
+}
+
+manager();
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
