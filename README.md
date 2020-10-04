@@ -23,3 +23,10 @@ output folder.
 ## Application Run Through
 ![Template Picture](./Assets/TeamTemplate.png)
 ![Run application](./Assets/ApplicationRun.gif)
+
+## Test 
+The tests can be ran by inputing npm run test
+
+## Questions 
+If there are further questions you can reach me at: (gabbymanzan98@icloud.com)
+
